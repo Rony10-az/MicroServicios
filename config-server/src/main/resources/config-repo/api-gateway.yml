@@ -1,0 +1,37 @@
+# Configuracion externalizada del API Gateway
+server:
+  port: 8090
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      routes:
+        - id: ms-clientes
+          uri: lb://ms-clientes
+          predicates:
+            - Path=/api/clientes/**
+        - id: ms-servicios
+          uri: lb://ms-servicios
+          predicates:
+            - Path=/api/servicios/**,/api/horarios/**
+        - id: ms-reservas
+          uri: lb://ms-reservas
+          predicates:
+            - Path=/api/reservas/**
+
+app:
+  display-name: "API Gateway - Sistema de Reservas"
+  mensajes:
+    bienvenida: "Gateway del sistema de reservas activo."
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true

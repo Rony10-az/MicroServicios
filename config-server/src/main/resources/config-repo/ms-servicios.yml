@@ -1,0 +1,33 @@
+# Configuracion externalizada de ms-servicios
+server:
+  port: 8082
+
+spring:
+  application:
+    name: ms-servicios
+  datasource:
+    url: jdbc:mysql://mysql-db:3306/db_servicios?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+app:
+  display-name: "Microservicio de Servicios y Horarios"
+  mensajes:
+    bienvenida: "Microservicio de servicios activo y configurado desde el Config Server."
+    fallback: "No fue posible consultar el servicio. Intente nuevamente."
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true

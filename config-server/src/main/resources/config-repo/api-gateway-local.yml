@@ -1,0 +1,9 @@
+# Overrides para correr api-gateway localmente (ej. desde IntelliJ), reutilizando
+# el eureka-server que sigue corriendo en Docker Compose.
+# Activar con: -Dspring.profiles.active=local (o env SPRING_PROFILES_ACTIVE=local)
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: false

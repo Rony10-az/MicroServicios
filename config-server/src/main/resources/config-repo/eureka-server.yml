@@ -1,0 +1,21 @@
+# Configuracion externalizada del Eureka Server
+server:
+  port: 8761
+
+spring:
+  application:
+    name: eureka-server
+
+app:
+  display-name: "Eureka Discovery Server"
+  mensajes:
+    bienvenida: "Servidor de descubrimiento de servicios (Eureka) activo."
+
+eureka:
+  instance:
+    hostname: eureka-server
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/

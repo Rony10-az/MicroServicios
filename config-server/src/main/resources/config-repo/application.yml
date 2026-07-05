@@ -1,0 +1,23 @@
+# Configuracion comun a TODOS los clientes del config-server
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+
+info:
+  app:
+    equipo: Evaluacion 04 - Desarrollo de Aplicaciones Web
+    modulo: Sistema de Reservas
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %5p [%thread] %logger{36} - %msg%n"
+  level:
+    pe.tecsup.reservas: INFO

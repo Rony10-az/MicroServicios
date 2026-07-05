@@ -1,0 +1,251 @@
+{
+  "info": {
+    "name": "Reservas Microservices - Evaluacion 04",
+    "description": "Coleccion para probar CRUD, comunicacion entre microservicios, registro en Eureka, acceso via Gateway y Circuit Breaker.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "gatewayUrl", "value": "http://localhost:8090" },
+    { "key": "eurekaUrl", "value": "http://localhost:8761" },
+    { "key": "configUrl", "value": "http://localhost:8888" },
+    { "key": "clienteId", "value": "1" },
+    { "key": "servicioId", "value": "1" },
+    { "key": "horarioId", "value": "1" },
+    { "key": "reservaId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "00 - Infraestructura",
+      "item": [
+        {
+          "name": "Config Server - Health",
+          "request": { "method": "GET", "url": "{{configUrl}}/actuator/health" }
+        },
+        {
+          "name": "Config Server - Config de ms-clientes",
+          "request": { "method": "GET", "url": "{{configUrl}}/ms-clientes/default" }
+        },
+        {
+          "name": "Eureka - Dashboard (HTML)",
+          "request": { "method": "GET", "url": "{{eurekaUrl}}/" }
+        },
+        {
+          "name": "Eureka - Apps registradas (JSON)",
+          "request": {
+            "method": "GET",
+            "url": "{{eurekaUrl}}/eureka/apps",
+            "header": [{ "key": "Accept", "value": "application/json" }]
+          }
+        },
+        {
+          "name": "Gateway - Health",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/actuator/health" }
+        }
+      ]
+    },
+    {
+      "name": "01 - Clientes (CRUD via Gateway)",
+      "item": [
+        {
+          "name": "Ping ms-clientes",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/clientes/ping" }
+        },
+        {
+          "name": "Crear cliente",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{gatewayUrl}}/api/clientes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Maria\",\n  \"apellido\": \"Gonzales\",\n  \"email\": \"maria.gonzales@example.com\",\n  \"telefono\": \"987654321\",\n  \"direccion\": \"Av. Siempre Viva 123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar clientes",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/clientes" }
+        },
+        {
+          "name": "Obtener cliente por id",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/clientes/{{clienteId}}" }
+        },
+        {
+          "name": "Actualizar cliente",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{gatewayUrl}}/api/clientes/{{clienteId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Maria\",\n  \"apellido\": \"Gonzales Paredes\",\n  \"email\": \"maria.gonzales@example.com\",\n  \"telefono\": \"987654322\",\n  \"direccion\": \"Av. Siempre Viva 456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar cliente",
+          "request": { "method": "DELETE", "url": "{{gatewayUrl}}/api/clientes/{{clienteId}}" }
+        }
+      ]
+    },
+    {
+      "name": "02 - Servicios y Horarios (CRUD via Gateway)",
+      "item": [
+        {
+          "name": "Ping ms-servicios",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/servicios/ping" }
+        },
+        {
+          "name": "Crear servicio",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{gatewayUrl}}/api/servicios",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Corte de cabello\",\n  \"descripcion\": \"Corte clasico\",\n  \"duracionMinutos\": 30,\n  \"precio\": 25.00\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar servicios",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/servicios" }
+        },
+        {
+          "name": "Obtener servicio por id",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/servicios/{{servicioId}}" }
+        },
+        {
+          "name": "Actualizar servicio",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{gatewayUrl}}/api/servicios/{{servicioId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Corte de cabello premium\",\n  \"descripcion\": \"Corte clasico + lavado\",\n  \"duracionMinutos\": 45,\n  \"precio\": 35.00\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear horario para servicio",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{gatewayUrl}}/api/servicios/{{servicioId}}/horarios",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-07-10\",\n  \"horaInicio\": \"09:00:00\",\n  \"horaFin\": \"09:30:00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar horarios de un servicio",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/servicios/{{servicioId}}/horarios" }
+        },
+        {
+          "name": "Obtener horario por id",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/horarios/{{horarioId}}" }
+        },
+        {
+          "name": "Liberar horario",
+          "request": { "method": "PUT", "url": "{{gatewayUrl}}/api/horarios/{{horarioId}}/liberar" }
+        },
+        {
+          "name": "Eliminar servicio",
+          "request": { "method": "DELETE", "url": "{{gatewayUrl}}/api/servicios/{{servicioId}}" }
+        }
+      ]
+    },
+    {
+      "name": "03 - Reservas (CRUD + comunicacion entre microservicios)",
+      "item": [
+        {
+          "name": "Ping ms-reservas",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/reservas/ping" }
+        },
+        {
+          "name": "Crear reserva (valida cliente y horario via Feign)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{gatewayUrl}}/api/reservas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": {{clienteId}},\n  \"servicioId\": {{servicioId}},\n  \"horarioId\": {{horarioId}}\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar reservas",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/reservas" }
+        },
+        {
+          "name": "Obtener reserva por id",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/reservas/{{reservaId}}" }
+        },
+        {
+          "name": "Confirmar reserva",
+          "request": { "method": "PUT", "url": "{{gatewayUrl}}/api/reservas/{{reservaId}}/confirmar" }
+        },
+        {
+          "name": "Atender reserva",
+          "request": { "method": "PUT", "url": "{{gatewayUrl}}/api/reservas/{{reservaId}}/atender" }
+        },
+        {
+          "name": "Cancelar reserva",
+          "request": { "method": "PUT", "url": "{{gatewayUrl}}/api/reservas/{{reservaId}}/cancelar" }
+        },
+        {
+          "name": "Historial de reservas por cliente",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/reservas/cliente/{{clienteId}}/historial" }
+        },
+        {
+          "name": "Eliminar reserva",
+          "request": { "method": "DELETE", "url": "{{gatewayUrl}}/api/reservas/{{reservaId}}" }
+        }
+      ]
+    },
+    {
+      "name": "04 - Prueba de Circuit Breaker + Retry",
+      "item": [
+        {
+          "name": "1. Detener ms-clientes (manual: docker compose stop ms-clientes)",
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/actuator/health",
+            "description": "Antes de este paso, detener el contenedor ms-clientes con: docker compose stop ms-clientes"
+          }
+        },
+        {
+          "name": "2. Crear reserva con ms-clientes caido (debe responder 503 con mensaje de fallback)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{gatewayUrl}}/api/reservas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": {{clienteId}},\n  \"servicioId\": {{servicioId}},\n  \"horarioId\": {{horarioId}}\n}"
+            },
+            "description": "Respuesta esperada: HTTP 503 con mensaje 'No fue posible consultar el servicio. Intente nuevamente.' luego de agotar los reintentos (Retry) y abrir el Circuit Breaker."
+          }
+        },
+        {
+          "name": "3. Circuit breaker abierto en ms-reservas (metrics)",
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:8083/actuator/health"
+          }
+        },
+        {
+          "name": "4. Reiniciar ms-clientes (manual: docker compose start ms-clientes)",
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/api/clientes/ping",
+            "description": "Antes de este paso, reiniciar el contenedor con: docker compose start ms-clientes. Luego de que el circuito pase a HALF_OPEN/CLOSED, la reserva deberia crearse normalmente."
+          }
+        }
+      ]
+    }
+  ]
+}
